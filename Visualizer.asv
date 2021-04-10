@@ -1,0 +1,14 @@
+
+function  Visualizer(z,t,yout)
+  clf;
+  vyout=yout(:,1:n);
+  wyout=yout(:,n+1:2*n);
+  %Creation de la grille
+  mesh(z,t,yout);
+
+  title ('Solution');
+  xlabel ('z (position)', 'Rotation', 20);
+  ylabel ('t (temps)', 'Rotation', -30);
+  zlabel ('v (amplitude du signal)');
+
+end
