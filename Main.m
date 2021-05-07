@@ -6,11 +6,11 @@ global z n D1 D2 dz;
 
 
 %% Definition des parametres
-tmax= 2000;
+tmax= 10;
 pas= 1;
 z0 = 0;
-zL = 10;
-n =51;
+zL = 1;
+n =101;
 %% Creation de la grille spatio temporelle
 dz = (zL - z0)/(n - 1);
 z = z0:dz:zL; 
@@ -21,7 +21,7 @@ t = t';
 %D1 = two_point_upwind_D1(z,1);
 D1 = three_point_centered_D1(z);
 %D1 = three_point_upwind_D1(z,1);
-%D1 = five_point_centered_D1(z);
+% D1 = five_point_centered_D1(z);
 %D1 = five_point_biased_upwind_D1(z,1);
 %D1 = four_point_upwind_D1(z,1);
 %D1 = four_point_biased_upwind_D1(z, 1);
@@ -37,23 +37,21 @@ v0 = ones (length(z),1);
 h0 = [u0;v0];
 
 %% Initiation de Ode
-
 %options=odeset('RelTol',1e-5,'AbsTol',1e-5,'stats','on','jpattern', sparse (spones([eye(n) + spones(D2), eye(n); eye(n),  eye(n)])));
-options=odeset('RelTol',1e-5,'AbsTol',1e-5,'stats','on', 'Mass', mass(n));
-%options=odeset('RelTol',1e-5,'AbsTol',1e-5,'stats','on');
+%options=odeset('RelTol',1e-5,'AbsTol',1e-5,'stats','on', 'Mass', mass(n));
+options=odeset('RelTol',1e-5,'AbsTol',1e-5,'stats','on', 'JPattern', JP());
 
 %% Lancement du chronometre
 tic
 
 %% Appel de Ode (Ode45 ici)
-[tout, yout] = ode15s(@Impulse_mass1,t,h0,options); %15s/23s/23t
-%[tout, yout] = ode15s(@Impulse_sw,t,h0);
-%[tout, yout] = ode15s(@Impulse_rapat,t,h0);
+%  [tout, yout] = ode45(@Impulse_mass1,t,h0,options); %15s/23s/23t
+[tout, yout] = ode15s(@Impulse_sw,t,h0, options);
+%[tout, yout] = ode15s(@Impulse,t,h0);
+% 17.6
 %% Arret et lecture du chronometre
 tcpu=toc;
 tcpu
-uyout=yout(:,1:n);
-vyout=yout(:,n+1:2*n);
 %% Rapatriement CL (cas rapatriement)
 % u(n)=(3*dz + u(n-1))/(1+3*dz);
 % v(n)=(exp(4)*dz)/5 *(u(n)-1) + v(n-1);
@@ -65,5 +63,5 @@ vyout=yout(:,n+1:2*n);
 % end
 
 %% Visualisation graphique
-%Visualizer2d(z,yout);
-Visualizer(z,tout,yout);
+Visualizer2d(z,yout);
+%Visualizer(z,tout,yout);
